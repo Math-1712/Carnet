@@ -1,0 +1,521 @@
+:root {
+  --nuit: #191521;
+  --nuit-haut: #211b2c;
+  --carte: #262030;
+  --bord: #372f45;
+  --os: #f0eae2;
+  --brume: #9c93a8;
+  --or: #d9a441;
+  --or-sourd: #7d6229;
+
+  --rayon: 10px;
+  --barre-basse: 62px;
+
+  --titre: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --texte: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--nuit);
+  color: var(--os);
+  font-family: var(--texte);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+input {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--or);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- ossature ---------- */
+
+.app {
+  min-height: 100dvh;
+  padding-bottom: calc(var(--barre-basse) + env(safe-area-inset-bottom));
+}
+
+.contenu {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 16px 32px;
+}
+
+.entete {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: linear-gradient(var(--nuit) 72%, transparent);
+  padding: calc(env(safe-area-inset-top) + 14px) 16px 12px;
+}
+
+.entete-interne {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.marque {
+  font-family: var(--titre);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px;
+}
+
+.marque span {
+  color: var(--or);
+}
+
+/* ---------- recherche ---------- */
+
+.champ {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--carte);
+  border: 1px solid var(--bord);
+  border-radius: var(--rayon);
+  padding: 0 12px;
+}
+
+.champ:focus-within {
+  border-color: var(--or-sourd);
+}
+
+.champ input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  color: var(--os);
+  padding: 12px 0;
+  font-size: 16px; /* evite le zoom auto sur iOS */
+}
+
+.champ input::placeholder {
+  color: var(--brume);
+}
+
+.champ input:focus {
+  outline: none;
+}
+
+.effacer {
+  color: var(--brume);
+  padding: 4px;
+  line-height: 1;
+}
+
+/* ---------- filtres ---------- */
+
+.filtres {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0 18px;
+  flex-wrap: wrap;
+}
+
+.pastille {
+  border: 1px solid var(--bord);
+  border-radius: 999px;
+  padding: 6px 13px;
+  font-size: 13.5px;
+  color: var(--brume);
+  transition: color 0.12s, border-color 0.12s;
+}
+
+.pastille[aria-pressed='true'] {
+  color: var(--nuit);
+  background: var(--or);
+  border-color: var(--or);
+  font-weight: 600;
+}
+
+/* ---------- grille d'affiches ---------- */
+
+.grille {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px 12px;
+}
+
+@media (min-width: 560px) {
+  .grille {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.vignette {
+  display: block;
+  text-align: left;
+  width: 100%;
+}
+
+.affiche {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  border-radius: var(--rayon);
+  overflow: hidden;
+  background: var(--carte);
+  border: 1px solid var(--bord);
+}
+
+.affiche img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.affiche-vide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 8px;
+  font-size: 11px;
+  color: var(--brume);
+  text-align: center;
+}
+
+/* pastille de statut posee sur l'affiche */
+.jeton {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--nuit);
+  color: var(--or);
+  border: 1px solid var(--or-sourd);
+}
+
+.jeton.encours {
+  color: var(--os);
+  border-color: var(--bord);
+}
+
+.vignette-titre {
+  margin: 7px 0 0;
+  font-size: 12.5px;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.vignette-annee {
+  font-size: 11.5px;
+  color: var(--brume);
+  margin: 2px 0 0;
+}
+
+/* ---------- pellicule (progression serie) ---------- */
+
+.pellicule {
+  display: flex;
+  gap: 2px;
+  margin-top: 5px;
+}
+
+.pellicule i {
+  flex: 1;
+  height: 3px;
+  border-radius: 1px;
+  background: var(--bord);
+}
+
+.pellicule i.vu {
+  background: var(--or);
+}
+
+/* ---------- fiche detaillee ---------- */
+
+.fiche-haut {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.fiche-affiche {
+  width: 118px;
+  flex-shrink: 0;
+}
+
+.fiche-titre {
+  font-family: var(--titre);
+  font-weight: 700;
+  font-size: 23px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+}
+
+.fiche-meta {
+  color: var(--brume);
+  font-size: 13.5px;
+  margin: 0 0 14px;
+}
+
+.synopsis {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: #cfc7c0;
+  margin: 0 0 22px;
+  max-width: 62ch;
+}
+
+.retour {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--brume);
+  font-size: 14px;
+  padding: 8px 0;
+  margin-bottom: 4px;
+}
+
+/* boutons de statut */
+.statuts {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.statut {
+  flex: 1;
+  border: 1px solid var(--bord);
+  border-radius: var(--rayon);
+  padding: 10px 6px;
+  font-size: 13.5px;
+  color: var(--brume);
+}
+
+.statut[aria-pressed='true'] {
+  background: var(--or);
+  border-color: var(--or);
+  color: var(--nuit);
+  font-weight: 600;
+}
+
+/* note en etoiles */
+.note {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+
+.note-label {
+  color: var(--brume);
+  font-size: 13.5px;
+  margin-right: 6px;
+}
+
+.etoile {
+  font-size: 22px;
+  line-height: 1;
+  color: var(--bord);
+  padding: 2px;
+}
+
+.etoile.pleine {
+  color: var(--or);
+}
+
+/* saisons et episodes */
+.section-titre {
+  font-family: var(--titre);
+  font-weight: 500;
+  font-size: 17px;
+  margin: 0 0 12px;
+}
+
+.saison {
+  border: 1px solid var(--bord);
+  border-radius: var(--rayon);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+.saison-entete {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 13px 14px;
+  text-align: left;
+}
+
+.saison-nom {
+  flex: 1;
+  font-size: 14.5px;
+}
+
+.saison-compte {
+  font-size: 13px;
+  color: var(--brume);
+  font-variant-numeric: tabular-nums;
+}
+
+.saison-corps {
+  border-top: 1px solid var(--bord);
+  padding: 6px 0;
+}
+
+.episode {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 9px 14px;
+  text-align: left;
+}
+
+.case {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+  border: 1px solid var(--bord);
+  border-radius: 5px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  color: transparent;
+}
+
+.case.cochee {
+  background: var(--or);
+  border-color: var(--or);
+  color: var(--nuit);
+}
+
+.episode-num {
+  color: var(--brume);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  min-width: 26px;
+}
+
+.episode-nom {
+  font-size: 14px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tout-cocher {
+  font-size: 12.5px;
+  color: var(--or);
+  padding: 4px 8px;
+}
+
+/* ---------- barre d'onglets ---------- */
+
+.onglets {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  background: var(--nuit-haut);
+  border-top: 1px solid var(--bord);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.onglet {
+  flex: 1;
+  height: var(--barre-basse);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 11.5px;
+  color: var(--brume);
+}
+
+.onglet[aria-current='page'] {
+  color: var(--or);
+}
+
+.onglet svg {
+  width: 21px;
+  height: 21px;
+}
+
+/* ---------- etats ---------- */
+
+.vide {
+  padding: 56px 8px;
+  text-align: center;
+  color: var(--brume);
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.vide strong {
+  display: block;
+  font-family: var(--titre);
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--os);
+  margin-bottom: 8px;
+}
+
+.alerte {
+  border: 1px solid var(--or-sourd);
+  background: rgba(217, 164, 65, 0.08);
+  border-radius: var(--rayon);
+  padding: 14px 16px;
+  font-size: 14px;
+  line-height: 1.55;
+  margin-bottom: 18px;
+}
+
+.alerte code {
+  font-size: 13px;
+  color: var(--or);
+}
+
+.chargement {
+  padding: 40px 0;
+  text-align: center;
+  color: var(--brume);
+  font-size: 14px;
+}
